@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:camera/camera.dart';
+import 'package:mlapi_flutter/CameraApp/temp.dart';
 import 'package:mlapi_flutter/CameraApp/test.dart';
 import 'CameraApp/page.dart';
 import 'Controller/my_cam_controller.dart';
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
             )),
         getPages: [
           GetPage(name: '/camera', page: () => CameraPage()),
-          GetPage(name: '/cam', page: () => CameraApp())
+          GetPage(name: '/cam', page: () => CameraApp()),
+          GetPage(name: '/test',page:()=> CameraExampleHome()),
         ],
         home: CameraPage(),
       ),
