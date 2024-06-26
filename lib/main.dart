@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:camera/camera.dart';
+import 'package:mlapi_flutter/CameraApp/test.dart';
+import 'CameraApp/page.dart';
+import 'Controller/my_cam_controller.dart';
 
-import 'Camera/page.dart';
+late List<CameraDescription> _cameras;
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  _cameras = await availableCameras();
+  Get.put(MyCamController(_cameras));
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,17 +29,8 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: GetMaterialApp(
-        localizationsDelegates: const [
-          // GlobalMaterialLocalizations.delegate,
-          // GlobalWidgetsLocalizations.delegate,
-          // GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('ko'),
-          Locale('en'),
-        ],
         locale: const Locale('ko'),
-        title: 'WonMo Calendar',
+        title: 'Pinder',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             hoverColor: const Color(0xFFACCCFF),
@@ -41,7 +43,8 @@ class MyApp extends StatelessWidget {
               radius: const Radius.circular(10),
             )),
         getPages: [
-          GetPage(name: '/camera', page: () => CameraPage())
+          GetPage(name: '/camera', page: () => CameraPage()),
+          GetPage(name: '/cam', page: () => CameraApp())
         ],
         home: CameraPage(),
       ),
