@@ -5,9 +5,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:unicons/unicons.dart';
 
 class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
-  // const CameraAppBar(this.onSendButtonPressed,{super.key});
-  // final VoidCallback onSendButtonPressed;
-  const CameraAppBar({super.key});
+  const CameraAppBar(this.onCameraButtonPressed,{super.key});
+  final VoidCallback onCameraButtonPressed;
 
   @override
   Size get preferredSize => Size.fromHeight(70.h);
@@ -44,9 +43,7 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
             IconButton(
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
-                onPressed: (){
-                  Get.toNamed('/test');
-                },
+                onPressed: onCameraButtonPressed,
                 icon: Icon(
                   UniconsLine.camera_change,
                   size: 25.sp,

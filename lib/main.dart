@@ -8,7 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:mlapi_flutter/CameraApp/image_confirm.dart';
 import 'package:mlapi_flutter/CameraApp/page.dart';
 import 'package:mlapi_flutter/CameraApp/test.dart';
-import 'CameraApp/ex.dart';
+import 'package:mlapi_flutter/Detect/page.dart';
 import 'Controller/my_cam_controller.dart';
 
 late List<CameraDescription> _cameras;
@@ -45,12 +45,12 @@ class MyApp extends StatelessWidget {
               radius: const Radius.circular(10),
             )),
         getPages: [
-          GetPage(name: '/camera', page: () => CameraPage()),
           GetPage(name: '/cam', page: () => CameraApp()),
           GetPage(name: '/test',page:()=> CameraExampleHome()),
           GetPage(name: '/imageConfirm',page:() => ImageConfirm()),
+          GetPage(name: '/detect', page:()=>DetectPage())
         ],
-        home: CameraPage(),
+        home: CameraApp(),
       ),
     );
   }

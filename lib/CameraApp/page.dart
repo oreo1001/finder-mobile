@@ -1,19 +1,15 @@
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mlapi_flutter/CameraApp/main_appbar.dart';
 import 'package:mlapi_flutter/Controller/my_cam_controller.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'dart:typed_data';
 
 import '../theme.dart';
-import 'custom_circle.dart';
-import 'custom_viewfinder.dart';
+import 'component/custom_circle.dart';
+import 'component/custom_viewfinder.dart';
+import 'component/main_appbar.dart';
 
 class CameraApp extends StatefulWidget {
   const CameraApp({super.key});
@@ -24,16 +20,16 @@ class CameraApp extends StatefulWidget {
 
 class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
   MyCamController myCamController = Get.find();
-  late CameraController controller;
   List<CameraDescription> myCams = [];
+  late CameraController controller;
 
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
   int _pointers = 0;
+  late CameraDescription currentDescription;
 
-  late Rx<XFile?> pickedImage;
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
 
   Future getImage(ImageSource imageSource) async {
@@ -42,7 +38,6 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
 
     if (pickedFile != null) {
       setState(() {
-        pickedImage = XFile(pickedFile.path).obs;
         myCamController.pickedImage = XFile(pickedFile.path).obs;
       });
       Get.toNamed('/imageConfirm');
@@ -53,81 +48,95 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    pickedImage = myCamController.pickedImage;
     WidgetsBinding.instance.addObserver(this);
     myCams = myCamController.myCameras;
-    _initializeCameraController(myCams);
+    print(myCams);
+    if (myCams.isNotEmpty) {
+      currentDescription = myCams[0];  // back
+      _initializeCameraController(currentDescription);
+    } else {
+      print('No cameras available');
+    }
   }
 
-  // @override
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   if (controller == null || !controller!.value.isInitialized) {
-  //     return;
-  //   }
-  //
-  //   if (state == AppLifecycleState.inactive) {
-  //     controller.dispose();
-  //   } else if (state == AppLifecycleState.resumed) {
-  //     _initializeCameraController(myCams);
-  //   }
-  // }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final CameraController cameraController = controller;
+    if (!cameraController.value.isInitialized) {
+      return;
+    }
+    if (state == AppLifecycleState.inactive) {
+      cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      _initializeCameraController(cameraController.description);
+    }
+  }
 
-  void _showInSnackBar(String message) {
+  void showInSnackBar(String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }
-  void _initializeCameraController(List<CameraDescription> myCams) {
-    controller = CameraController(myCams.first, ResolutionPreset.high);
+  void switchCameraDirection(){
+    if(currentDescription.lensDirection==CameraLensDirection.back){
+      currentDescription = myCams[1];
+      _initializeCameraController(currentDescription);
+    }else{
+      currentDescription = myCams[0];
+      _initializeCameraController(currentDescription);
+    }
+  }
 
+  Future<void> _initializeCameraController(CameraDescription cameraDescription) async {
+    controller = CameraController(
+      cameraDescription,
+      ResolutionPreset.max,
+      imageFormatGroup: ImageFormatGroup.jpeg,
+    );
     controller.addListener(() {
       if (mounted) {
         setState(() {});
       }
       if (controller.value.hasError) {
-        _showInSnackBar(
-            'Camera error ${controller.value.errorDescription}');
+        print('Camera error: ${controller.value.errorDescription}');
       }
     });
-    controller.initialize().then((_) {
-      if (!mounted) {
-        return;
+
+    try {
+      await controller.initialize();
+      _minAvailableZoom = await controller.getMinZoomLevel();
+      _maxAvailableZoom = await controller.getMaxZoomLevel();
+      if (mounted) {
+        setState(() {});
       }
-      controller.getMaxZoomLevel().then((double value) => _maxAvailableZoom = value);
-      controller.getMinZoomLevel().then((double value) => _minAvailableZoom = value);
-      setState(() {});
-    }).catchError((Object e) {
-      if (e is CameraException) {
-        switch (e.code) {
-          case 'CameraAccessDenied':
-            _showInSnackBar('You have denied camera access.');
-            break;
-          case 'CameraAccessDeniedWithoutPrompt':
-            _showInSnackBar('Please go to Settings app to enable camera access.');
-            break;
-          case 'CameraAccessRestricted':
-            _showInSnackBar('Camera access is restricted.');
-            break;
-          case 'AudioAccessDenied':
-            _showInSnackBar('You have denied audio access.');
-            break;
-          case 'AudioAccessDeniedWithoutPrompt':
-            _showInSnackBar('Please go to Settings app to enable audio access.');
-            break;
-          case 'AudioAccessRestricted':
-            _showInSnackBar('Audio access is restricted.');
-            break;
-          default:
-            _showInSnackBar(e.toString());
-            break;
-        }
+    } on CameraException catch (e) {
+      switch (e.code) {
+        case 'CameraAccessDenied':
+          showInSnackBar('You have denied camera access.');
+        case 'CameraAccessDeniedWithoutPrompt':
+        // iOS only
+          showInSnackBar('Please go to Settings app to enable camera access.');
+        case 'CameraAccessRestricted':
+        // iOS only
+          showInSnackBar('Camera access is restricted.');
+        case 'AudioAccessDenied':
+          showInSnackBar('You have denied audio access.');
+        case 'AudioAccessDeniedWithoutPrompt':
+        // iOS only
+          showInSnackBar('Please go to Settings app to enable audio access.');
+        case 'AudioAccessRestricted':
+        // iOS only
+          showInSnackBar('Audio access is restricted.');
+        default:
+          showInSnackBar(e.toString());
+          break;
       }
-    });
+    }
   }
 
   @override
   void dispose() {
-    // controller.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    controller.dispose();
     super.dispose();
   }
 
@@ -147,14 +156,16 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
                 top: 0,
                 left: 0,
                 right: 0,
-                child: CameraAppBar()
+                child: CameraAppBar((){switchCameraDirection();})
               ),
               Positioned(
                 top: 180.h,
                 left: (MediaQuery.of(context).size.width - 300.w) / 2, // 화면의 가운데에 위치
-                child: CustomPaint(
-                  size: Size(300.w, 300.h), // 원하는 크기
-                  painter: ViewfinderPainter(),
+                child: IgnorePointer(
+                  child: CustomPaint(
+                    size: Size(300.w, 300.h), // 원하는 크기
+                    painter: ViewfinderPainter(),
+                  ),
                 ),
               ),
             ],
@@ -168,7 +179,7 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
                 children: [
                   _imageButton(),
                   GestureDetector(
-                    onTap:(){takePicture(controller);},
+                    onTap:(){takePicture();},
                     child: CustomPaint(
                       size: Size(80.w,80.h),
                       painter: CircleWithBorderPainter(),
@@ -228,13 +239,14 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
         ),
       );
   }
-  Future takePicture(CameraController cameraController) async {
-    if (cameraController == null || !cameraController.value.isInitialized) {
-      _showInSnackBar('Error: select a camera first.');
+  Future takePicture() async {
+    final CameraController cameraController = controller;
+    if (!cameraController.value.isInitialized) {
+      showInSnackBar('Error: select a camera first.');
       return null;
     }
     if (cameraController.value.isTakingPicture) {
-      _showInSnackBar("사진을 찍는 중 입니다.");
+      showInSnackBar("사진을 찍는 중 입니다.");
     }
     final XFile file = await cameraController.takePicture();
     myCamController.pickedImage = file.obs;
@@ -254,13 +266,13 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
 
   Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
     // When there are not exactly two fingers on screen don't scale
-    if (controller == null || _pointers != 2) {
+    if (_pointers != 2) {
       return;
     }
     _currentScale = (_baseScale * details.scale)
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
-    await controller!.setZoomLevel(_currentScale);
+    await controller.setZoomLevel(_currentScale);
   }
 }
 
