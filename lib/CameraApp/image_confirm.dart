@@ -13,7 +13,6 @@ import 'package:http/http.dart' as http;
 import 'package:unicons/unicons.dart';
 
 import '../theme.dart';
-import 'component/custom_circle.dart';
 
 class ImageConfirm extends StatefulWidget {
   const ImageConfirm({super.key});
@@ -99,7 +98,6 @@ class _ImageConfirmState extends State<ImageConfirm> {
               ),
             ),
           ),
-          Text(outputText)
         ],
       ),
     );
