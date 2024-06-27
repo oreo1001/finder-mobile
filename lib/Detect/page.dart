@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
@@ -51,7 +50,6 @@ class _DetectPageState extends State<DetectPage> {
       }),
     );
     var parsedData = jsonDecode(detections.body);
-    print(parsedData);
     dataMap.value =  getMapFromParsedData(parsedData).obs;
   }
 
@@ -77,21 +75,20 @@ class _DetectPageState extends State<DetectPage> {
   }
   @override
   Widget build(BuildContext context) {
-    print(dataMap);
     String label = '';
     double resultScore = 0;
-    for (int i = 0; i < dataMap['labels'].length; i++) {
-      if (!dataMap['labels'][i].contains('Healthy')) {
-        double score = dataMap['scores'][i];
-        resultScore = (score*1000).roundToDouble()/10;
-        label = dataMap['labels'][i];
-      }
-    }
     return Scaffold(
       body: Obx(() {
         if (dataMap.isEmpty) {
           return Center(child: CircularProgressIndicator());
         } else {
+          for (int i = 0; i < dataMap['labels'].length; i++) {
+            if (!dataMap['labels'][i].contains('Healthy')) {
+              double score = dataMap['scores'][i];
+              resultScore = (score*1000).roundToDouble()/10;  //소숫점 첫째 자리까지 반올림
+              label = dataMap['labels'][i];
+            }
+          }
           return Column(
             children: [
               Stack(
@@ -119,9 +116,6 @@ class _DetectPageState extends State<DetectPage> {
               Text('해당 식물은 $resultScore%의 확률로 \n $label 병에 걸렸습니다.'),
               SizedBox(height: 100.h,),
               Text(dataMap.toString()),
-              // TextButton(onPressed: () {
-              //   Get.toNamed('/ex');
-              // }, child: Text('dd')),
             ],
           );
         }
