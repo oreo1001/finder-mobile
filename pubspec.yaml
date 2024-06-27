@@ -18,6 +18,7 @@ dependencies:
   unicons: ^2.1.2
   google_fonts: ^6.2.1
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
 
 dev_dependencies:
   flutter_test:
