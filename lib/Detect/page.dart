@@ -7,10 +7,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mlapi_flutter/Controller/my_cam_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:mlapi_flutter/Detect/component/box_painter.dart';
+import 'package:mlapi_flutter/Detect/loading_screen.dart';
 import 'package:mlapi_flutter/Detect/parsing_function.dart';
+import 'package:mlapi_flutter/theme.dart';
 import 'package:unicons/unicons.dart';
 
 class DetectPage extends StatefulWidget {
@@ -81,7 +84,12 @@ class _DetectPageState extends State<DetectPage> {
     return Scaffold(
       body: Obx(() {
         if (dataMap.isEmpty) {
-          return Center(child: CircularProgressIndicator());
+          return Column(
+            children: [
+              CustomLinearProgress(),
+              Image.asset('assets/images/plant-search.png',width:140.w, height:200.h),
+            ],
+          );
         } else {
           for (int i = 0; i < dataMap['labels'].length; i++) {
             if (!dataMap['labels'][i].contains('Healthy')) {
@@ -116,7 +124,6 @@ class _DetectPageState extends State<DetectPage> {
               ),
               Text('해당 식물은 $resultScore%의 확률로 \n $label 병에 걸렸습니다.'),
               SizedBox(height: 100.h,),
-              Text('hihihi'),
               Row(children: [
                 IconButton(onPressed: (){
                     Get.offNamed('/cam');
