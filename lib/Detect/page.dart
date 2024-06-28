@@ -164,7 +164,7 @@ class _DetectPageState extends State<DetectPage> {
             )),
         IconButton(
             onPressed: () {
-              Get.offNamed('/cam');
+              Get.offNamed('/home');
             },
             style: IconButton.styleFrom(
                 backgroundColor: Colors.grey.shade200,
