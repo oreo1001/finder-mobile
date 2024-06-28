@@ -11,6 +11,7 @@ import 'package:mlapi_flutter/Controller/my_cam_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:mlapi_flutter/Detect/component/box_painter.dart';
 import 'package:mlapi_flutter/Detect/parsing_function.dart';
+import 'package:unicons/unicons.dart';
 
 class DetectPage extends StatefulWidget {
   const DetectPage({super.key});
@@ -115,6 +116,22 @@ class _DetectPageState extends State<DetectPage> {
               ),
               Text('해당 식물은 $resultScore%의 확률로 \n $label 병에 걸렸습니다.'),
               SizedBox(height: 100.h,),
+              Text('hihihi'),
+              Row(children: [
+                IconButton(onPressed: (){
+                    Get.offNamed('/cam');
+                  },
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.grey.shade200,
+                    shape:const CircleBorder(),
+                    padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w)
+                  ),
+                  icon: Icon(
+                  UniconsLine.camera,
+                  size: 35.sp,
+                  color: Colors.black,
+                ),)
+              ]),
               Text(dataMap.toString()),
             ],
           );

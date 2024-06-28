@@ -214,7 +214,17 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
       ],
     );
   }
-  Widget _cameraPreviewWidget() {     //zoomin 기능 시도
+  Widget _cameraPreviewWidget() {
+    if (!controller.value.isInitialized) {
+      return const Text(
+        'waiting for camera',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 24.0,
+          fontWeight: FontWeight.w700,
+        ),
+      );
+    }
       return Listener(
         onPointerDown: (_) => _pointers++,
         onPointerUp: (_) => _pointers--,

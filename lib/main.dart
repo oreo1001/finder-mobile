@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -15,10 +16,14 @@ import 'Controller/my_cam_controller.dart';
 late List<CameraDescription> _cameras;
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding =  WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding); ///Native Splash를 위한 코드 (splash를 바인딩)
 
   _cameras = await availableCameras();
   Get.put(MyCamController(_cameras));
+
+  await Future.delayed(const Duration(seconds: 1));
+  FlutterNativeSplash.remove();
   runApp(const MyApp());
 }
 
@@ -47,10 +52,10 @@ class MyApp extends StatelessWidget {
             )),
         getPages: [
           GetPage(name: '/cam', page: () => CameraApp()),
-          GetPage(name: '/test',page:()=> CameraExampleHome()),
           GetPage(name: '/imageConfirm',page:() => ImageConfirm()),
           GetPage(name: '/detect', page:()=>DetectPage()),
-          GetPage(name: '/ex',page:()=>Example())
+          GetPage(name: '/ex',page:()=>Example()),
+          GetPage(name: '/test',page:()=> CameraExampleHome()),
         ],
         home: CameraApp(),
       ),

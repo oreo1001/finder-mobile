@@ -60,7 +60,7 @@ class _ImageConfirmState extends State<ImageConfirm> {
                     onPressed: (){Get.toNamed('/detect');},
                     icon: Icon(
                       UniconsLine.check_circle,
-                      size: 100.sp,
+                      size: 80.sp,
                       color: Colors.teal.shade300,
                     ),),
                   TextButton(onPressed: (){}, child: Text('촬영 팁',style:textTheme().bodyMedium!.copyWith(color:Colors.teal.shade300))),

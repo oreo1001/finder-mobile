@@ -29,17 +29,17 @@ class CameraAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Get.back();
                 },
                 icon: Icon(Icons.close, size: 25.sp, color:Colors.white)),
-            IconButton(
-              padding: EdgeInsets.zero,
-              constraints: BoxConstraints(),
-              onPressed: (){
-                Get.toNamed('/test');
-              },
-              icon: Icon(
-                UniconsLine.auto_flash,
-                size: 25.sp,
-                color: Colors.white,
-              ),),
+            // IconButton(
+            //   padding: EdgeInsets.zero,
+            //   constraints: BoxConstraints(),
+            //   onPressed: (){
+            //     Get.toNamed('/test');
+            //   },
+            //   icon: Icon(
+            //     UniconsLine.auto_flash,
+            //     size: 25.sp,
+            //     color: Colors.white,
+            //   ),),
             IconButton(
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
