@@ -29,7 +29,7 @@ class _CustomLinearProgressState extends State<CustomLinearProgress>
   void initState() {
     pickedImage = myCamController.pickedImage;
     _animationController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
       vsync: this,
     );
 

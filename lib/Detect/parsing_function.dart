@@ -18,10 +18,7 @@ List<List<double>> parseBoxes(String boxString){
 
 Map<String,dynamic> getMapFromParsedData(Map<String,dynamic> parsedData){
   Map<String, dynamic> dataMap = {
-    'boxes': [],
-    'scores': [],
-    'class_ids': [],
-    'labels': [],
+    'error':'no Result',
   };
   if (parsedData['boxes']=='[]') {
     return dataMap;
