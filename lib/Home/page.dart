@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../theme.dart';
-import 'custom_card2.dart';
+import 'custom_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -38,10 +38,10 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       SizedBox(height: 60.h),
-                      Text('Saltware Object Detection',
+                      Text('Pinder',
                           style: textTheme()
                               .bodyLarge
-                              ?.copyWith(fontSize: 20.sp, color: Colors.white)),
+                              ?.copyWith(fontSize: 24.sp, color: Colors.white)),
                     ],
                   ),
                 ),

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:pytorch_lite/pigeon.dart';
 import 'package:pytorch_lite/pytorch_lite.dart';
+import '../theme.dart';
 import 'ui/box_widget.dart';
 
 import 'ui/camera_view.dart';
@@ -35,7 +39,16 @@ class _RunModelByCameraDemoState extends State<RunModelByCameraDemo> {
 
           // Bounding boxes
           boundingBoxes2(results),
-
+          Positioned(
+              left: 10.w,
+              top: 30.h,
+              child: IconButton(onPressed: () {  }, icon: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Get.back();
+                  },
+                  icon: Icon(Icons.close, size: 25.sp, color:Colors.white)),
+              )),
           // Heading
           // Align(
           //   alignment: Alignment.topLeft,
@@ -53,47 +66,32 @@ class _RunModelByCameraDemoState extends State<RunModelByCameraDemo> {
           //   ),
           // ),
 
-          //Bottom Sheet
           Align(
             alignment: Alignment.bottomCenter,
-            child: DraggableScrollableSheet(
-              initialChildSize: 0.4,
-              minChildSize: 0.1,
-              maxChildSize: 0.5,
-              builder: (_, ScrollController scrollController) => Container(
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(24.0),
-                        topRight: Radius.circular(24.0))),
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Center(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(0,0,0,25.h),
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                  color: Colors.black),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.keyboard_arrow_up,
-                            size: 48, color: Colors.orange),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              if (classification != null)
-                                StatsRow('Classification:', '$classification'),
-                              if (classificationInferenceTime != null)
-                                StatsRow('Classification Inference time:',
-                                    '${classificationInferenceTime?.inMilliseconds} ms'),
-                              if (objectDetectionInferenceTime != null)
-                                StatsRow('Object Detection Inference time:',
-                                    '${objectDetectionInferenceTime?.inMilliseconds} ms'),
-                            ],
-                          ),
-                        )
+                        if (classification != null)
+                          StatsRow('객체 분류', '$classification'),
+                        if (classificationInferenceTime != null)
+                          StatsRow('분류 추론 시간',
+                              '${classificationInferenceTime?.inMilliseconds} ms'),
+                        objectDetectionInferenceTime != null ? StatsRow('병충해 탐지 추론 시간',
+                            '${objectDetectionInferenceTime?.inMilliseconds} ms') : SizedBox(height:50.h)
                       ],
                     ),
-                  ),
-                ),
+                  )
+                ],
               ),
             ),
           )
@@ -161,15 +159,15 @@ class StatsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style:textTheme().bodyMedium!.copyWith(color:Colors.white,fontSize: 13.sp),
           ),
-          Text(value)
+          Text(value,style: textTheme().bodyMedium!.copyWith(color:Colors.white,fontSize: 20.sp)),
         ],
       ),
     );

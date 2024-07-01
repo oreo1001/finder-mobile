@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../theme.dart';
 
@@ -31,7 +29,7 @@ class CustomCard extends StatelessWidget {
                   topRight:  Radius.circular(10.sp),
                   bottomRight: Radius.circular(10.sp),
                 ),
-              boxShadow: [
+                boxShadow: [
                   BoxShadow(
                     color: Colors.grey.shade300.withOpacity(0.2),
                     spreadRadius: 2.sp,
