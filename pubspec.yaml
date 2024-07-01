@@ -13,13 +13,14 @@ dependencies:
   flutter_screenutil: ^5.9.3
   get: ^4.6.6
   image_picker: ^1.1.2
-  camera: ^0.11.0+1
+  camera: ^0.10.6
   video_player: ^2.8.7
   unicons: ^2.1.2
   google_fonts: ^6.2.1
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.4.0
   loading_animation_widget: ^1.2.1
+  pytorch_lite: ^4.2.5
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +41,8 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/icons/
+    - assets/models/
+    - assets/labels/
 
   fonts:
     - family: NotoSansKR

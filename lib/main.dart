@@ -13,6 +13,7 @@ import 'package:mlapi_flutter/Detect/component/ex.dart';
 import 'package:mlapi_flutter/Detect/page.dart';
 import 'package:mlapi_flutter/Home/page.dart';
 import 'Controller/my_cam_controller.dart';
+import 'RealTime/page.dart';
 
 late List<CameraDescription> _cameras;
 
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
           GetPage(name: '/ex',page:()=>Example()),
           GetPage(name: '/test',page:()=> CameraExampleHome()),
           GetPage(name: '/home',page:()=> HomePage()),
+          GetPage(name: '/realTime', page:()=> RunModelByCameraDemo()),
         ],
         home: HomePage(),
       ),

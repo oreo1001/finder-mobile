@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../theme.dart';
-import 'custom_card.dart';
+import 'custom_card2.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,88 +17,73 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey.shade100,
+        backgroundColor: Colors.white,
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CustomCard(title: '실시간 탐지', imagePath: 'assets/images/병해충1.png', buttonText: '실시간 탐지 바로 가기', onPressed: () { Get.toNamed('/cam'); }),
-
-              TextButton(
-                  onPressed: () {},
-                  child: Text('실시간 탐지',
-                      style: textTheme().bodyMedium!.copyWith(
-                          color: Colors.teal.shade300, fontSize: 20.sp))),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 80.h),
-                child: TextButton(
-                    onPressed: () {
-                      Get.toNamed('/cam');
-                    },
-                    child: Text('이미지로 검색',
-                        style: textTheme().bodyMedium!.copyWith(
-                            color: Colors.teal.shade300, fontSize: 20.sp))),
+              Container(
+                //위에 곡선
+                color: Colors.transparent,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.teal.shade200,
+                    border: Border.all(color: Colors.transparent),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(50.sp),
+                    ),
+                  ),
+                  width: double.infinity,
+                  height: 130.h,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 60.h),
+                      Text('Saltware Object Detection',
+                          style: textTheme()
+                              .bodyLarge
+                              ?.copyWith(fontSize: 20.sp, color: Colors.white)),
+                    ],
+                  ),
+                ),
               ),
-              TextButton(
-                  onPressed: () {},
-                  child: Text('temp',
-                      style: textTheme().bodyMedium!.copyWith(
-                          color: Colors.teal.shade300, fontSize: 20.sp))),
+              Container(
+                //밑에 곡선
+                color: Colors.teal.shade200,
+                height: 80.h,
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.transparent),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(50.sp),
+                      ),
+                    ),
+                    width: double.infinity,
+                    child: Text('')),
+              ),
+              GestureDetector(
+                  onTap: () {
+                    Get.toNamed('/realTime');
+                  },
+                  child: CustomCard(
+                    title: '병충해 실시간 탐지',
+                    imagePath: 'assets/images/observing-cat.jpg',
+                    myColor: Colors.blue.shade200,
+                  )),
+              SizedBox(
+                height: 50.h,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed('/cam');
+                },
+                child: CustomCard(
+                    title: '이미지로 병충해 탐지',
+                    imagePath: 'assets/images/camera.jpg',
+                    myColor: Colors.lightGreen),
+              ),
             ],
           ),
         ));
   }
-}
-
-Container myCard(String title,String imagePath, String buttonText,VoidCallback pushButton){
-  return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.sp),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade300.withOpacity(0.2),
-              spreadRadius: 2.sp,
-              blurRadius: 1.sp,
-              offset: const Offset(0, 1),
-            ),
-          ]),
-      width: 330.w,
-      height: 300.h,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 20.w, vertical: 20.h),
-            child: Text(title,
-                style: textTheme()
-                    .displayMedium
-                    ?.copyWith(fontSize: 20.sp)),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.sp),
-                child: Image.asset('assets/images/병해충1.png')),
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-            child: TextButton(
-                onPressed: pushButton,
-                style: TextButton.styleFrom(
-                  side: BorderSide(
-                      color: Colors.black, width: 1.5.w),
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(8.sp), // 둥근 사각형 테두리
-                  ),
-                ),
-                child: Text(buttonText, style: textTheme()
-                    .displayMedium
-                    ?.copyWith(fontSize: 14.sp))),
-          )
-        ],
-      ));
 }
