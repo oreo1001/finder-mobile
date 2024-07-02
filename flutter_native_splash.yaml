@@ -1,10 +1,10 @@
 flutter_native_splash:
   icon_background_color: "#111111"
   color: "#FFFFFF"
-  image: assets/icons/ic_launcher.png
+  image: assets/icons/ic_launcher_main.png
   android_12:
     icon_background_color: "#111111"
-    image: assets/icons/ic_launcher.png
+    image: assets/icons/ic_launcher_main.png
     color: "#FFFFFF"
   ios: true
   web: false
