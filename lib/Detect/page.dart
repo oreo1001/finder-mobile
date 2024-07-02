@@ -103,10 +103,12 @@ class _DetectPageState extends State<DetectPage> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('해당 사진에서 정보를 읽어올 수 없습니다.', style: textTheme()
-                        .bodyMedium
-                        ?.copyWith(fontSize: 18.sp, color: Colors.teal.shade500)),
-                    SizedBox(height: 20.h,)
+                    Text('해당 사진에서 정보를 읽어올 수 없습니다.',
+                        style: textTheme().bodyMedium?.copyWith(
+                            fontSize: 18.sp, color: Colors.teal.shade500)),
+                    SizedBox(
+                      height: 20.h,
+                    )
                   ],
                 ),
               ],
@@ -119,37 +121,32 @@ class _DetectPageState extends State<DetectPage> {
     );
   }
 
-  Padding imageAndBoxWidget() {
-    return Padding(
+ Container imageAndBoxWidget() {
+    print(imageWidth);
+    return Container(
       padding: EdgeInsets.symmetric(vertical: 30.h),
-      child: Stack(
-        children: [
-          imageBytes == null
-              ? Text('이미지를 선택하세요')
-              : AspectRatio(
-                  aspectRatio: imageWidth! / imageHeight!,
-                  child: Image.memory(imageBytes!),
-                ),
-          dataMap.containsKey('error')
-              ? Container()
-              : imageBytes == null
-                  ? Container()
-                  : AspectRatio(
-                      aspectRatio: imageWidth! / imageHeight!,
-                      child: CustomPaint(
-                        painter: MyBoxPainter(
-                          dataMap: dataMap,
-                          originalWidth: imageWidth!,
-                          originalHeight: imageHeight!,
-                        ),
-                      ),
+      child: AspectRatio(
+        aspectRatio: imageWidth!/imageHeight!,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            imageBytes == null ? Text('이미지를 선택하세요') : Image.memory(imageBytes!),
+            dataMap.containsKey('error') || imageBytes == null
+                ? Container()
+                : CustomPaint(
+                    painter: MyBoxPainter(
+                      dataMap: dataMap,
+                      originalWidth: imageWidth!,
+                      originalHeight: imageHeight!,
                     ),
-        ],
+                  ),
+          ],
+        ),
       ),
     );
   }
 
-  SingleChildScrollView detectResult(){
+  SingleChildScrollView detectResult() {
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -157,18 +154,18 @@ class _DetectPageState extends State<DetectPage> {
           const DetectAppBar(),
           imageAndBoxWidget(),
           ListView.builder(
-            physics: const NeverScrollableScrollPhysics(), // 스크롤 비활성화
-            shrinkWrap: true, // 내용에 맞게 크기 조절
+            physics: const NeverScrollableScrollPhysics(),
+            // 스크롤 비활성화
+            shrinkWrap: true,
+            // 내용에 맞게 크기 조절
             padding: EdgeInsets.symmetric(horizontal: 10.w),
             itemCount: dataMap['boxes'].length,
             itemBuilder: (context, index) {
               List<double> box = dataMap['boxes'][index];
-              double score = dataMap['scores'].isNotEmpty
-                  ? dataMap['scores'][index]
-                  : 0.0;
-              String label = dataMap['labels'].isNotEmpty
-                  ? dataMap['labels'][index]
-                  : '';
+              double score =
+                  dataMap['scores'].isNotEmpty ? dataMap['scores'][index] : 0.0;
+              String label =
+                  dataMap['labels'].isNotEmpty ? dataMap['labels'][index] : '';
               String roundedScore = (score * 100).toStringAsFixed(1);
               return Card(
                 color: Colors.teal.shade300,
@@ -185,19 +182,16 @@ class _DetectPageState extends State<DetectPage> {
                             ?.copyWith(fontSize: 14.sp, color: Colors.white),
                       ),
                       SizedBox(height: 8.h),
-                      Text(
-                          '확률: $roundedScore%',
+                      Text('확률: $roundedScore%',
                           style: textTheme()
                               .bodyMedium
-                              ?.copyWith(fontSize: 14.sp, color: Colors.white)
-                      ),
+                              ?.copyWith(fontSize: 14.sp, color: Colors.white)),
                       SizedBox(height: 8.h),
                       Text(
                           '바운딩 박스 좌표: [${box[0]}, ${box[1]}, ${box[2]}, ${box[3]}]',
                           style: textTheme()
                               .bodyMedium
-                              ?.copyWith(fontSize: 14.sp, color: Colors.white)
-                      ),
+                              ?.copyWith(fontSize: 14.sp, color: Colors.white)),
                     ],
                   ),
                 ),
