@@ -9,7 +9,6 @@ import 'package:camera/camera.dart';
 import 'package:mlapi_flutter/CameraApp/image_confirm.dart';
 import 'package:mlapi_flutter/CameraApp/page.dart';
 import 'package:mlapi_flutter/CameraApp/test.dart';
-import 'package:mlapi_flutter/Detect/component/ex.dart';
 import 'package:mlapi_flutter/Detect/page.dart';
 import 'package:mlapi_flutter/Home/page.dart';
 import 'Controller/my_cam_controller.dart';
@@ -56,7 +55,6 @@ class MyApp extends StatelessWidget {
           GetPage(name: '/cam', page: () => CameraApp()),
           GetPage(name: '/imageConfirm',page:() => ImageConfirm()),
           GetPage(name: '/detect', page:()=>DetectPage()),
-          GetPage(name: '/ex',page:()=>Example()),
           GetPage(name: '/test',page:()=> CameraExampleHome()),
           GetPage(name: '/home',page:()=> HomePage()),
           GetPage(name: '/realTime', page:()=> RunModelByCameraDemo()),

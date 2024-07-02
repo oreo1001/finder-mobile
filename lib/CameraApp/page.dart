@@ -4,7 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mlapi_flutter/CameraApp/component/tip_dialog.dart';
 import 'package:mlapi_flutter/Controller/my_cam_controller.dart';
+import 'package:mlapi_flutter/main.dart';
+import 'package:unicons/unicons.dart';
 
 import '../theme.dart';
 import 'component/custom_circle.dart';
@@ -29,8 +32,7 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
   double _baseScale = 1.0;
   int _pointers = 0;
   late CameraDescription currentDescription;
-
-  final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
+  final ImagePicker picker = ImagePicker();
 
   Future getImage(ImageSource imageSource) async {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
@@ -44,7 +46,6 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -52,7 +53,7 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
     myCams = myCamController.myCameras;
     print(myCams);
     if (myCams.isNotEmpty) {
-      currentDescription = myCams[0];  // back
+      currentDescription = myCams[0]; // back
       _initializeCameraController(currentDescription);
     } else {
       print('No cameras available');
@@ -76,17 +77,19 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }
-  void switchCameraDirection(){
-    if(currentDescription.lensDirection==CameraLensDirection.back){
+
+  void switchCameraDirection() {
+    if (currentDescription.lensDirection == CameraLensDirection.back) {
       currentDescription = myCams[1];
       _initializeCameraController(currentDescription);
-    }else{
+    } else {
       currentDescription = myCams[0];
       _initializeCameraController(currentDescription);
     }
   }
 
-  Future<void> _initializeCameraController(CameraDescription cameraDescription) async {
+  Future<void> _initializeCameraController(
+      CameraDescription cameraDescription) async {
     controller = CameraController(
       cameraDescription,
       ResolutionPreset.max,
@@ -113,18 +116,18 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
         case 'CameraAccessDenied':
           showInSnackBar('You have denied camera access.');
         case 'CameraAccessDeniedWithoutPrompt':
-        // iOS only
+          // iOS only
           showInSnackBar('Please go to Settings app to enable camera access.');
         case 'CameraAccessRestricted':
-        // iOS only
+          // iOS only
           showInSnackBar('Camera access is restricted.');
         case 'AudioAccessDenied':
           showInSnackBar('You have denied audio access.');
         case 'AudioAccessDeniedWithoutPrompt':
-        // iOS only
+          // iOS only
           showInSnackBar('Please go to Settings app to enable audio access.');
         case 'AudioAccessRestricted':
-        // iOS only
+          // iOS only
           showInSnackBar('Audio access is restricted.');
         default:
           showInSnackBar(e.toString());
@@ -140,7 +143,6 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (!controller.value.isInitialized) {
@@ -153,17 +155,19 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
             children: [
               _cameraPreviewWidget(),
               Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: CameraAppBar((){switchCameraDirection();})
-              ),
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: CameraAppBar(() {
+                    switchCameraDirection();
+                  })),
               Positioned(
                 top: 180.h,
-                left: (MediaQuery.of(context).size.width - 300.w) / 2, // 화면의 가운데에 위치
+                left: (MediaQuery.of(context).size.width - 300.w) /
+                    2,
                 child: IgnorePointer(
                   child: CustomPaint(
-                    size: Size(300.w, 300.h), // 원하는 크기
+                    size: Size(300.w, 300.h),
                     painter: ViewfinderPainter(),
                   ),
                 ),
@@ -179,13 +183,28 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
                 children: [
                   _imageButton(),
                   GestureDetector(
-                    onTap:(){takePicture();},
+                    onTap: () {
+                      takePicture();
+                    },
                     child: CustomPaint(
-                      size: Size(80.w,80.h),
+                      size: Size(80.w, 80.h),
                       painter: CircleWithBorderPainter(),
                     ),
                   ),
-                  TextButton(onPressed: (){}, child: Text('촬영 팁',style:textTheme().bodyMedium!.copyWith(color:Colors.teal.shade300))),
+                  TextButton(
+                      onPressed: () {
+                        Get.dialog(tipDialog());
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(UniconsLine.comment_exclamation, size: 25.sp, color: Colors.teal.shade300,),
+                          Text('촬영 팁',
+                              style: textTheme()
+                                  .bodyMedium!
+                                  .copyWith(color: Colors.teal.shade300, fontSize: 14.sp)),
+                        ],
+                      )),
                 ],
               ),
             ),
@@ -209,11 +228,15 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
               borderRadius: BorderRadius.circular(17.sp), // 둥근 사각형 테두리
             ),
           ),
-          child: Text("사진첩",style:textTheme().bodyMedium!.copyWith(color:Colors.teal.shade300)),
+          child: Text("사진첩",
+              style: textTheme()
+                  .bodyMedium!
+                  .copyWith(color: Colors.teal.shade300)),
         ),
       ],
     );
   }
+
   Widget _cameraPreviewWidget() {
     if (!controller.value.isInitialized) {
       return const Text(
@@ -225,30 +248,31 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
         ),
       );
     }
-      return Listener(
-        onPointerDown: (_) => _pointers++,
-        onPointerUp: (_) => _pointers--,
-        child: SizedBox(
-          height:600.h,
-          child: AspectRatio(
-            aspectRatio: controller.value.aspectRatio,
-            child: CameraPreview(
-              controller,
-              child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    return GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onScaleStart: _handleScaleStart,
-                      onScaleUpdate: _handleScaleUpdate,
-                      onTapDown: (TapDownDetails details) =>
-                          onViewFinderTap(details, constraints),
-                    );
-                  }),
-            ),
+    return Listener(
+      onPointerDown: (_) => _pointers++,
+      onPointerUp: (_) => _pointers--,
+      child: SizedBox(
+        height: 600.h,
+        child: AspectRatio(
+          aspectRatio: controller.value.aspectRatio,
+          child: CameraPreview(
+            controller,
+            child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onScaleStart: _handleScaleStart,
+                onScaleUpdate: _handleScaleUpdate,
+                onTapDown: (TapDownDetails details) =>
+                    onViewFinderTap(details, constraints),
+              );
+            }),
           ),
         ),
-      );
+      ),
+    );
   }
+
   Future takePicture() async {
     final CameraController cameraController = controller;
     if (!cameraController.value.isInitialized) {
@@ -262,6 +286,7 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
     myCamController.pickedImage = file.obs;
     Get.toNamed('/imageConfirm');
   }
+
   void onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
     final Offset offset = Offset(
       details.localPosition.dx / constraints.maxWidth,
@@ -275,7 +300,6 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
   }
 
   Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
-    // When there are not exactly two fingers on screen don't scale
     if (_pointers != 2) {
       return;
     }
@@ -285,4 +309,3 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
     await controller.setZoomLevel(_currentScale);
   }
 }
-

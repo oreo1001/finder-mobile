@@ -12,6 +12,7 @@ import 'package:mlapi_flutter/Controller/my_cam_controller.dart';
 import 'package:unicons/unicons.dart';
 
 import '../theme.dart';
+import 'component/tip_dialog.dart';
 
 class ImageConfirm extends StatefulWidget {
   const ImageConfirm({super.key});
@@ -57,13 +58,26 @@ class _ImageConfirmState extends State<ImageConfirm> {
                   IconButton(
                     padding: EdgeInsets.zero,
                     constraints: BoxConstraints(),
-                    onPressed: (){Get.toNamed('/detect');},
+                    onPressed: (){Get.offNamed('/detect');},
                     icon: Icon(
                       UniconsLine.check_circle,
                       size: 80.sp,
                       color: Colors.teal.shade300,
                     ),),
-                  TextButton(onPressed: (){}, child: Text('촬영 팁',style:textTheme().bodyMedium!.copyWith(color:Colors.teal.shade300))),
+                  TextButton(
+                      onPressed: () {
+                        Get.dialog(tipDialog());
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(UniconsLine.comment_exclamation, size: 25.sp, color: Colors.teal.shade300,),
+                          Text('촬영 팁',
+                              style: textTheme()
+                                  .bodyMedium!
+                                  .copyWith(color: Colors.teal.shade300, fontSize: 14.sp)),
+                        ],
+                      )),
                 ],
               ),
             ),

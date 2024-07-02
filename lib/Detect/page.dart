@@ -12,7 +12,9 @@ import 'package:http/http.dart' as http;
 import 'package:mlapi_flutter/Detect/component/box_painter.dart';
 import 'package:mlapi_flutter/Detect/loading_screen.dart';
 import 'package:mlapi_flutter/Detect/parsing_function.dart';
-import 'package:unicons/unicons.dart';
+
+import '../theme.dart';
+import 'component/detect_app_bar.dart';
 
 class DetectPage extends StatefulWidget {
   const DetectPage({super.key});
@@ -54,6 +56,7 @@ class _DetectPageState extends State<DetectPage> {
     );
     var parsedData = jsonDecode(detections.body);
     dataMap.value = getMapFromParsedData(parsedData).obs;
+    print(dataMap);
   }
 
   Future<void> getImageAndDetect(XFile? pickedFile) async {
@@ -79,8 +82,6 @@ class _DetectPageState extends State<DetectPage> {
 
   @override
   Widget build(BuildContext context) {
-    String label = '';
-    double resultScore = 0;
     return Scaffold(
       body: Obx(() {
         if (dataMap.isEmpty) {
@@ -92,32 +93,33 @@ class _DetectPageState extends State<DetectPage> {
             ],
           );
         } else if (dataMap.containsKey('error')) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              imageAndBoxWidget(),
-              Text('해당 사진에서 정보를 읽어올 수 없습니다.'),
-              iconButtonsRowWidget(),
-            ],
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                DetectAppBar(),
+                imageAndBoxWidget(),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('해당 사진에서 정보를 읽어올 수 없습니다.', style: textTheme()
+                        .bodyMedium
+                        ?.copyWith(fontSize: 18.sp, color: Colors.teal.shade500)),
+                    SizedBox(height: 20.h,)
+                  ],
+                ),
+              ],
+            ),
           );
         } else {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              imageAndBoxWidget(),
-              Text('해당 식물은 $resultScore%의 확률로 \n $label 병에 걸렸습니다.'),
-              iconButtonsRowWidget(),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Text("test result : $dataMap"),
-              ),
-            ],
-          );
+          return detectResult();
         }
       }),
     );
   }
-  Padding imageAndBoxWidget(){
+
+  Padding imageAndBoxWidget() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 30.h),
       child: Stack(
@@ -125,58 +127,85 @@ class _DetectPageState extends State<DetectPage> {
           imageBytes == null
               ? Text('이미지를 선택하세요')
               : AspectRatio(
-            aspectRatio: imageWidth! / imageHeight!,
-            child: Image.memory(imageBytes!),
-          ),
-          imageBytes == null
+                  aspectRatio: imageWidth! / imageHeight!,
+                  child: Image.memory(imageBytes!),
+                ),
+          dataMap.containsKey('error')
               ? Container()
-              : AspectRatio(
-            aspectRatio: imageWidth! / imageHeight!,
-            child: CustomPaint(
-              painter: MyBoxPainter(
-                dataMap: dataMap,
-                originalWidth: imageWidth!,
-                originalHeight: imageHeight!,
-              ),
-            ),
-          ),
+              : imageBytes == null
+                  ? Container()
+                  : AspectRatio(
+                      aspectRatio: imageWidth! / imageHeight!,
+                      child: CustomPaint(
+                        painter: MyBoxPainter(
+                          dataMap: dataMap,
+                          originalWidth: imageWidth!,
+                          originalHeight: imageHeight!,
+                        ),
+                      ),
+                    ),
         ],
       ),
     );
   }
-  Padding iconButtonsRowWidget(){
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 30.h),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        IconButton(
-            onPressed: () {
-              Get.offNamed('/cam');
+
+  SingleChildScrollView detectResult(){
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const DetectAppBar(),
+          imageAndBoxWidget(),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(), // 스크롤 비활성화
+            shrinkWrap: true, // 내용에 맞게 크기 조절
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            itemCount: dataMap['boxes'].length,
+            itemBuilder: (context, index) {
+              List<double> box = dataMap['boxes'][index];
+              double score = dataMap['scores'].isNotEmpty
+                  ? dataMap['scores'][index]
+                  : 0.0;
+              String label = dataMap['labels'].isNotEmpty
+                  ? dataMap['labels'][index]
+                  : '';
+              String roundedScore = (score * 100).toStringAsFixed(1);
+              return Card(
+                color: Colors.teal.shade300,
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '개체 레이블: $label',
+                        style: textTheme()
+                            .bodyMedium
+                            ?.copyWith(fontSize: 14.sp, color: Colors.white),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                          '확률: $roundedScore%',
+                          style: textTheme()
+                              .bodyMedium
+                              ?.copyWith(fontSize: 14.sp, color: Colors.white)
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                          '바운딩 박스 좌표: [${box[0]}, ${box[1]}, ${box[2]}, ${box[3]}]',
+                          style: textTheme()
+                              .bodyMedium
+                              ?.copyWith(fontSize: 14.sp, color: Colors.white)
+                      ),
+                    ],
+                  ),
+                ),
+              );
             },
-            style: IconButton.styleFrom(
-                backgroundColor: Colors.grey.shade200,
-                shape: const CircleBorder(),
-                padding: EdgeInsets.symmetric(
-                    vertical: 10.h, horizontal: 10.w)),
-            icon: Icon(
-              UniconsLine.camera,
-              size: 35.sp,
-              color: Colors.black,
-            )),
-        IconButton(
-            onPressed: () {
-              Get.offNamed('/home');
-            },
-            style: IconButton.styleFrom(
-                backgroundColor: Colors.grey.shade200,
-                shape: const CircleBorder(),
-                padding: EdgeInsets.symmetric(
-                    vertical: 10.h, horizontal: 10.w)),
-            icon: Icon(
-              UniconsLine.home,
-              size: 35.sp,
-              color: Colors.black,
-            )),
-      ]),
+          ),
+        ],
+      ),
     );
   }
 }
