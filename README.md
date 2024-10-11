@@ -1,16 +1,6 @@
-# mlapi_flutter
+# Finder 모바일 앱 개발 
+병충해 탐지 모델을 사용해서
+
+API Gateway로 배포한 API를 통해서 flutter application 개발
 
 model for plant sickness
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
